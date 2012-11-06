@@ -131,7 +131,8 @@
                  :user
                  (util/resolve-keypaths))
         ]
-    (with-var-roots [node/*USER* user]
+    (do
+        (with-var-roots [node/*USER* user]
       (with-command-line args
         "Provisioning tool for Storm Clusters"
         [[start? "Start Cluster?"]
@@ -148,7 +149,8 @@
          upgrade? (upgrade! aws name release)
          attach? (attach! aws name)
          ips? (print-all-ips! aws name)
-         :else (println "Must pass --start or --stop or --attach"))))))
+         :else (println "Must pass --start or --stop or --attach"))))
+      (shutdown-agents))))
 
 ;; DEBUGGING
 (comment
