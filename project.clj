@@ -3,6 +3,7 @@
   :test-path "test/clj"
   :dev-resources-path "conf"
   :run-aliases {:deploy backtype.storm.provision}
+  :main backtype.storm.provision
 
   :repositories {
                  "sonatype" "https://oss.sonatype.org/content/repositories/releases"
@@ -31,7 +32,10 @@
                  [log4j/log4j "1.2.14"]
                  [jvyaml "1.0.0"]]
 
-  :dev-dependencies [[swank-clojure "1.2.1"]
-                     [org.cloudhoist/pallet-lein "0.5.2"]])
+  :dev-dependencies [
+;                 [swank-clojure "1.4.2"]
+                 [org.cloudhoist/pallet-lein "0.5.2"]
+                 ]
+  )
 
 

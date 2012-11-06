@@ -1,4 +1,5 @@
 (ns backtype.storm.provision
+  (:gen-class) 
   (:import [java.io File])
   (:use [clojure.contrib.command-line]
         [pallet.compute :exclude [admin-user]]
