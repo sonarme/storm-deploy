@@ -150,7 +150,8 @@
          attach? (attach! aws name)
          ips? (print-all-ips! aws name)
          :else (println "Must pass --start or --stop or --attach"))))
-      (shutdown-agents))))
+        (shutdown-agents)
+        (System/exit 0))))
 
 ;; DEBUGGING
 (comment
