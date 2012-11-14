@@ -1,5 +1,6 @@
 lib/
 logs/
 *.jar
+target/
 pom.xml
 .lein-deps-sum
