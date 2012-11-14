@@ -58,7 +58,7 @@
          :content (str "StrictHostKeyChecking=" (yes-or-no host-key-checking))
          :mode 600))))
 
-(def *USER* nil)
+(def ^:dynamic *USER* nil)
 
 (defn base-server-spec []
   (server-spec

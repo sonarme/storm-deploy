@@ -1,7 +1,7 @@
 (ns backtype.storm.provision
   (:gen-class) 
   (:import [java.io File])
-  (:use [clojure.contrib.command-line]
+  (:use [clojure.tools.cli :only [cli]]
         [pallet.compute :exclude [admin-user]]
         [backtype.storm security]
         [pallet.core]
@@ -32,8 +32,8 @@
 (defn- print-ips-for-tag! [aws tag-str]
   (let [running-node (filter running? (map (partial pallet.compute.jclouds/jclouds-node->node aws) (nodes-in-group aws tag-str)))]
     (info (str "TAG:     " tag-str))
-    (info (str "PUBLIC:  " (map primary-ip running-node)))
-    (info (str "PRIVATE: " (map private-ip running-node)))))
+    (info (str "PUBLIC:  " (vec (map primary-ip running-node))))
+    (info (str "PRIVATE: " (vec (map private-ip running-node))))))
 
 (defn print-all-ips! [aws name]
   (let [all-tags [(str "zookeeper-" name) (str "nimbus-" name) (str "supervisor-" name)]]
@@ -124,34 +124,50 @@
                        (update-in [:environment :user] util/resolve-keypaths))]
     (compute-service-from-map storm-conf)))
 
-(defn -main [& args]
+(defn do-main [& args]
   (let [aws (mk-aws)
         user (-> (storm/storm-config "default")
                  :environment
                  :user
                  (util/resolve-keypaths))
         ]
-    (do
-        (with-var-roots [node/*USER* user]
-      (with-command-line args
-        "Provisioning tool for Storm Clusters"
-        [[start? "Start Cluster?"]
-         [stop? "Shutdown Cluster?"]
-         [attach? "Attach to Cluster?"]
-         [upgrade? "Upgrade existing cluster"]
-         [ips? "Print Cluster IP Addresses?"]
-         [name "Cluster name" "dev"]
-         [release "Release version" nil]]
+    (with-var-roots [node/*USER* user]
+      (let [
+        [options args banner]  (cli args
+         ["--start" "Start Cluster?" :flag true :default false]
+         ["--stop" "Shutdown Cluster?" :flag true :default false]
+         ["--attach" "Attach to Cluster?" :flag true :default false]
+         ["--update" "Upgrade existing cluster" :flag true :default false]
+         ["--ips" "Print Cluster IP Addresses?" :flag true :default false]
+         ["--name" "Cluster Name" :default "dev"]
+         ["--release" "Release version" :default "0.8.1"])
+        name (:name options)
+        release (:release options)]
+        (cond
+         (:stop options)
+         (stop! aws name)
+         
+         (:start options)
+         (start! aws name release)
+         
+         (:upgrade options)
+         (upgrade! aws name release)
+         
+         (:attach options)
+         (attach! aws name)
+         
+         (:ips options)
+         (print-all-ips! aws name)
+         
+         :else (println "Must pass --start or --stop or --attach"))
+        ))))
 
-        (cond 
-         stop? (stop! aws name)
-         start? (start! aws name release)
-         upgrade? (upgrade! aws name release)
-         attach? (attach! aws name)
-         ips? (print-all-ips! aws name)
-         :else (println "Must pass --start or --stop or --attach"))))
-        (shutdown-agents)
-        (System/exit 0))))
+(defn -main [& args]
+  (do
+    (do-main args)
+    (shutdown-agents)
+    (System/exit 0))
+  )
 
 ;; DEBUGGING
 (comment
