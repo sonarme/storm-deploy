@@ -62,6 +62,12 @@
 
     (cd "jzmq")
 
+    (cd "src")                                                                                                                      
+    (touch "classdist_noinst.stamp")                                                                                                
+    ("CLASSPATH=.:./.:$CLASSPATH javac -d . org/zeromq/ZMQ.java org/zeromq/ZMQException.java org/zeromq/ZMQQueue.java org/zeromq/ZM\
+QForwarder.java org/zeromq/ZMQStreamer.java")                                                                                       
+    (cd "..")
+
     (export (str "JAVA_HOME="
                  @(dirname @(dirname @(dirname @(update-alternatives "--list" java))))))
 
