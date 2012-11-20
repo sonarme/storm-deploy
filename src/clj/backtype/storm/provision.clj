@@ -32,8 +32,8 @@
 (defn- print-ips-for-tag! [aws tag-str]
   (let [running-node (filter running? (map (partial pallet.compute.jclouds/jclouds-node->node aws) (nodes-in-group aws tag-str)))]
     (info (str "TAG:     " tag-str))
-    (info (str "PUBLIC:  " (map primary-ip running-node)))
-    (info (str "PRIVATE: " (map private-ip running-node)))))
+    (info (str "PUBLIC:  " (vec (map primary-ip running-node))))
+    (info (str "PRIVATE: " (vec (map private-ip running-node))))))
 
 (defn print-all-ips! [aws name]
   (let [all-tags [(str "zookeeper-" name) (str "nimbus-" name) (str "supervisor-" name)]]
