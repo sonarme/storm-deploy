@@ -152,7 +152,7 @@
 
 (defn -main [& args]
   (do
-    (do-main args)
+    (apply do-main args)
     (shutdown-agents)
     (System/exit 0)))
 
