@@ -222,7 +222,11 @@ cd bin && . ./zkEnv.sh && java  \"-Dzookeeper.log.dir=${ZOO_LOG_DIR}\" \"-Dzooke
   :bootstrap (pallet.action/phase
               (pallet.crate.automated-admin-user/automated-admin-user))
   :configure (pallet.action/phase
-              (pallet.crate.java/java :openjdk :jdk)
+              (pallet.crate.java/java-settings {:vendor :oracle
+                        :version "7"
+                        :components #{:jdk}})
+              (pallet.crate.java/install-java)
+
               (pallet.crate.zookeeper/install)
               (pallet.crate.zookeeper/configure)
               (pallet.crate.zookeeper/init))

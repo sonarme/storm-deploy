@@ -44,7 +44,10 @@
 (defn- install-dependencies [request]
   (->
    request
-   (java/java :openjdk)
+   (java/java-settings {:vendor :oracle
+                        :version "7"
+                        :components #{:jdk}})
+   (java/install-java)
    (git/git)
    (leiningen/install)
    (zeromq/install :version "2.1.4")

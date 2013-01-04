@@ -67,7 +67,11 @@
                                   (:username *USER*)
                                   (:public-key-path *USER*)))
             :configure (phase-fn
-                        (java/java :openjdk))}))
+			(java/java-settings {:vendor :oracle
+                        :version "7"
+                        :components #{:jdk}})
+			(java/install-java)
+			)}))
 
 (defn zookeeper-server-spec []
      (server-spec
