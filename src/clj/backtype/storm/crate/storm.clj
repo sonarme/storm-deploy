@@ -58,7 +58,7 @@
    ))
 
 (defn storm-release-url [release]
-  (format "https://github.com/downloads/nathanmarz/storm/storm-%s.zip" release))
+  (format "https://dl.dropbox.com/u/133901206/storm-%s.zip" release))
 
 (defn download-release [request release]
   (-> request
